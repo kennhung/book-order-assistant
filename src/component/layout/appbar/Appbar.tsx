@@ -108,11 +108,13 @@ export default function Appbar({ drawerOpen, handleDrawerOpen }: AppbarProps) {
                 <Toolbar>
                     <IconButton
                         edge="start"
-                        className={classes.menuButton}
+                        className={clsx(classes.menuButton, {
+                            [classes.menuButtonHide]: drawerOpen,
+                        })}
                         color="inherit"
-                        aria-label="open drawer"
+                        onClick={handleDrawerOpen}
                     >
-                        <MenuIcon onClick={handleDrawerOpen} />
+                        <MenuIcon />
                     </IconButton>
                     <Typography className={classes.title} variant="h6" noWrap>
                         Book Order Assistant
@@ -133,7 +135,7 @@ export default function Appbar({ drawerOpen, handleDrawerOpen }: AppbarProps) {
                     <div className={classes.grow} />
                     <div className={classes.sectionDesktop}>
                         <IconButton color="inherit">
-                            <Badge badgeContent={17} color="secondary">
+                            <Badge badgeContent={0} color="secondary">
                                 <NotificationsIcon />
                             </Badge>
                         </IconButton>

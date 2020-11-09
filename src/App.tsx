@@ -1,17 +1,26 @@
 import React, { useState } from 'react'
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
+import 'fontsource-roboto'
 import CssBaseline from '@material-ui/core/CssBaseline'
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
 
 import Appbar from './component/layout/appbar/Appbar'
 import MainDrawer from './component/layout/drawer/MainDrawer'
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      display: 'flex',
-    },
-  })
-);
+import useStyles from './component/useStyles'
+import Home from './component/homepage/Home'
+
+const theme = createMuiTheme({
+  typography: {
+    fontFamily: [
+      '"Roboto"',
+      '"Helvetica"',
+      '"Noto Sans TC"',
+      '"Arial"',
+      'sans-serif'
+    ].join(','),
+    fontSize: 16
+  },
+});
 
 function App() {
   const classes = useStyles();
@@ -28,9 +37,12 @@ function App() {
 
   return (
     <div className={classes.root}>
-      <CssBaseline />
-      <Appbar drawerOpen={isDrawerOpen} handleDrawerOpen={handleDrawerOpen} />
-      <MainDrawer open={isDrawerOpen} handleDrawerClose={handleDrawerClose} />
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Appbar drawerOpen={isDrawerOpen} handleDrawerOpen={handleDrawerOpen} />
+        <MainDrawer open={isDrawerOpen} handleDrawerClose={handleDrawerClose} />
+        <Home />
+      </ThemeProvider>
     </div>
   );
 }

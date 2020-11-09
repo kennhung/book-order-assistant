@@ -56,15 +56,14 @@ export default makeStyles((theme: Theme) =>
             // necessary for content to be below app bar
             ...theme.mixins.toolbar,
         },
-        content: {
-            flexGrow: 1,
-            padding: theme.spacing(3),
-        },
         grow: {
             flexGrow: 1,
         },
         menuButton: {
             marginRight: theme.spacing(2),
+        },
+        menuButtonHide: {
+            display: 'none'
         },
         title: {
             display: 'none',
