@@ -1,24 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react'
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
+import CssBaseline from '@material-ui/core/CssBaseline'
+
+import Appbar from './component/layout/appbar/Appbar'
+import MainDrawer from './component/layout/drawer/MainDrawer'
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      display: 'flex',
+    },
+  })
+);
 
 function App() {
+  const classes = useStyles();
+
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const handleDrawerOpen = () => {
+    setIsDrawerOpen(true);
+  };
+
+  const handleDrawerClose = () => {
+    setIsDrawerOpen(false);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className={classes.root}>
+      <CssBaseline />
+      <Appbar drawerOpen={isDrawerOpen} handleDrawerOpen={handleDrawerOpen} />
+      <MainDrawer open={isDrawerOpen} handleDrawerClose={handleDrawerClose} />
     </div>
   );
 }
