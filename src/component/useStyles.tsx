@@ -120,5 +120,10 @@ export default makeStyles((theme: Theme) =>
                 display: 'none',
             },
         },
+        appBarAvater: {
+            width: theme.spacing(4),
+            height: theme.spacing(4),
+            fontSize: theme.typography.fontSize
+        },
     }),
 );

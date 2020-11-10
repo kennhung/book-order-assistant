@@ -1,12 +1,13 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import clsx from 'clsx'
-import { AppBar, Toolbar, IconButton, Typography, InputBase, Badge, MenuItem, Menu } from '@material-ui/core'
+import { AppBar, Toolbar, IconButton, Typography, InputBase, Badge, MenuItem, Menu, Avatar, Button } from '@material-ui/core'
 import MenuIcon from '@material-ui/icons/Menu'
 import SearchIcon from '@material-ui/icons/Search'
 import AccountCircle from '@material-ui/icons/AccountCircle'
 import MailIcon from '@material-ui/icons/Mail'
 import NotificationsIcon from '@material-ui/icons/Notifications'
 import MoreIcon from '@material-ui/icons/MoreVert'
+import firebase, { auth } from '../../../firebase'
 
 import useStyles from '../../useStyles'
 
@@ -17,8 +18,15 @@ type AppbarProps = {
 
 export default function Appbar({ drawerOpen, handleDrawerOpen }: AppbarProps) {
     const classes = useStyles();
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
+
+    const [loginedUser, setLoginedUser] = useState<null | firebase.User>(null);
+    useEffect(() => {
+        return auth.onAuthStateChanged((user) => {
+            setLoginedUser(user);
+        })
+    }, []);
 
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -133,34 +141,44 @@ export default function Appbar({ drawerOpen, handleDrawerOpen }: AppbarProps) {
                         />
                     </div>
                     <div className={classes.grow} />
-                    <div className={classes.sectionDesktop}>
-                        <IconButton color="inherit">
-                            <Badge badgeContent={0} color="secondary">
-                                <NotificationsIcon />
-                            </Badge>
-                        </IconButton>
-                        <IconButton
-                            edge="end"
-                            aria-label="account of current user"
-                            aria-controls={menuId}
-                            aria-haspopup="true"
-                            onClick={handleProfileMenuOpen}
-                            color="inherit"
-                        >
-                            <AccountCircle />
-                        </IconButton>
-                    </div>
-                    <div className={classes.sectionMobile}>
-                        <IconButton
-                            aria-label="show more"
-                            aria-controls={mobileMenuId}
-                            aria-haspopup="true"
-                            onClick={handleMobileMenuOpen}
-                            color="inherit"
-                        >
-                            <MoreIcon />
-                        </IconButton>
-                    </div>
+                    {
+                        loginedUser ?
+                            <>
+                                <div className={classes.sectionDesktop}>
+                                    <IconButton color="inherit">
+                                        <Badge badgeContent={0} color="secondary">
+                                            <NotificationsIcon />
+                                        </Badge>
+                                    </IconButton>
+                                    <IconButton
+                                        edge="end"
+                                        aria-label="account of current user"
+                                        aria-controls={menuId}
+                                        aria-haspopup="true"
+                                        onClick={handleProfileMenuOpen}
+                                        color="inherit"
+                                    >
+                                        <Avatar src={loginedUser?.photoURL || undefined} alt={loginedUser?.displayName || undefined} className={classes.appBarAvater}>
+                                            {loginedUser?.displayName?.split(" ").map((v) => {
+                                                return v.toUpperCase().substr(0, 1);
+                                            })}
+                                        </Avatar>
+                                    </IconButton>
+                                </div>
+                                <div className={classes.sectionMobile}>
+                                    <IconButton
+                                        aria-label="show more"
+                                        aria-controls={mobileMenuId}
+                                        aria-haspopup="true"
+                                        onClick={handleMobileMenuOpen}
+                                        color="inherit"
+                                    >
+                                        <MoreIcon />
+                                    </IconButton>
+                                </div>
+                            </> :
+                            <Button color="inherit">Login</Button>
+                    }
                 </Toolbar>
             </AppBar>
             {renderMobileMenu}
