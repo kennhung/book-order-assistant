@@ -2,21 +2,11 @@ import React from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { Card, CardContent, Typography, CardActions, Button, Container, Grid } from '@material-ui/core'
 
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        root: {
-            margin: theme.spacing(15, 4)
-        }
-    })
-);
-
 function Home() {
-    const classes = useStyles();
-
     return (
-        <Container maxWidth="xl" className={classes.root}>
+        <Container maxWidth="xl">
             <Grid container spacing={3} justify="center">
-                <Grid item xs md={6}>
+                <Grid item xs md={4}>
                     <Card>
                         <CardContent>
                             <Typography variant="h5" component="h2">

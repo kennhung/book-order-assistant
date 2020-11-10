@@ -58,7 +58,9 @@ function App() {
                 <AuthDialog open={openLoginModal} handleClose={() => {
                     setOpenLoginModal(false);
                 }} />
-                <Home />
+                <div className={classes.mainContent}>
+                    <Home />
+                </div>
             </ThemeProvider>
         </div>
     );

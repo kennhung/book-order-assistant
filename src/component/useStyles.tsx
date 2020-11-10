@@ -7,6 +7,10 @@ export default makeStyles((theme: Theme) =>
         root: {
             display: 'flex',
         },
+        mainContent: {
+            marginTop: theme.spacing(10),
+            width: '100%'
+        },
         appBar: {
             zIndex: theme.zIndex.drawer + 1,
             transition: theme.transitions.create(['width', 'margin'], {
