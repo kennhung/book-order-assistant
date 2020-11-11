@@ -3,7 +3,7 @@ import { Route, Switch } from 'react-router-dom'
 import NotFoundPage from './NotFoundPage'
 
 import Home from './homepage/Home'
-
+import MyOrders from './order/MyOrders'
 
 function MainAppRoutes() {
     return (
@@ -11,6 +11,9 @@ function MainAppRoutes() {
             <Switch>
                 <Route path='/' exact>
                     <Home />
+                </Route>
+                <Route path='/myorder'>
+                    <MyOrders />
                 </Route>
                 <Route>
                     <NotFoundPage />

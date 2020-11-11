@@ -1,7 +1,8 @@
 import React from 'react'
 import clsx from 'clsx'
 import { useTheme } from '@material-ui/core/styles'
-import { Drawer, List, Divider, IconButton, ListItem, ListItemIcon, ListItemText } from '@material-ui/core'
+import { Drawer, List, Divider, IconButton, ListItem, ListItemIcon, ListItemText, SvgIconTypeMap } from '@material-ui/core'
+import { useHistory, useLocation } from 'react-router-dom'
 
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
@@ -20,6 +21,8 @@ type MainDrawerProps = {
 function MainDrawer({ open, handleDrawerClose }: MainDrawerProps) {
     const classes = useStyles();
     const theme = useTheme();
+    const history = useHistory();
+    const location = useLocation();
 
     return (
         <Drawer
@@ -42,13 +45,13 @@ function MainDrawer({ open, handleDrawerClose }: MainDrawerProps) {
             </div>
             <Divider />
             <List>
-                <ListItem button selected>
+                <ListItem button selected={location.pathname === '/'} onClick={() => history.push('/')}>
                     <ListItemIcon>
                         <HomeIcon />
                     </ListItemIcon>
                     <ListItemText primary={"Home"} />
                 </ListItem>
-                <ListItem button>
+                <ListItem button selected={location.pathname === '/myorder'} onClick={() => history.push('/myorder')}>
                     <ListItemIcon>
                         <MenuBookIcon />
                     </ListItemIcon>

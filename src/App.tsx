@@ -53,17 +53,17 @@ function App() {
     return (
         <div className={classes.root}>
             <ThemeProvider theme={theme}>
-                <CssBaseline />
-                <Appbar drawerOpen={isDrawerOpen} handleDrawerOpen={handleDrawerOpen} />
-                <MainDrawer open={isDrawerOpen} handleDrawerClose={handleDrawerClose} />
-                <AuthDialog open={openLoginModal} handleClose={() => {
-                    setOpenLoginModal(false);
-                }} />
-                <div className={classes.mainContent}>
-                    <BrowserRouter>
+                <BrowserRouter>
+                    <CssBaseline />
+                    <Appbar drawerOpen={isDrawerOpen} handleDrawerOpen={handleDrawerOpen} />
+                    <MainDrawer open={isDrawerOpen} handleDrawerClose={handleDrawerClose} />
+                    <AuthDialog open={openLoginModal} handleClose={() => {
+                        setOpenLoginModal(false);
+                    }} />
+                    <div className={classes.mainContent}>
                         <MainAppRoutes />
-                    </BrowserRouter>
-                </div>
+                    </div>
+                </BrowserRouter>
             </ThemeProvider>
         </div>
     );
