@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import clsx from 'clsx'
-import { AppBar, Toolbar, IconButton, Typography, InputBase, Badge, MenuItem, Menu, Avatar, Button } from '@material-ui/core'
+import { AppBar, Toolbar, IconButton, Typography, InputBase, Badge, Button } from '@material-ui/core'
 import MenuIcon from '@material-ui/icons/Menu'
 import SearchIcon from '@material-ui/icons/Search'
 import NotificationsIcon from '@material-ui/icons/Notifications'

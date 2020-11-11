@@ -2,13 +2,14 @@ import React, { useState } from 'react'
 import 'fontsource-roboto'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
+import { BrowserRouter } from 'react-router-dom'
 
 import Appbar from './component/layout/appbar/Appbar'
 import MainDrawer from './component/layout/drawer/MainDrawer'
 import AuthDialog from './component/auth/AuthDialog'
 
 import useStyles from './component/useStyles'
-import Home from './component/homepage/Home'
+import MainAppRoutes from './component/MainAppRoutes'
 
 const theme = createMuiTheme({
     typography: {
@@ -59,7 +60,9 @@ function App() {
                     setOpenLoginModal(false);
                 }} />
                 <div className={classes.mainContent}>
-                    <Home />
+                    <BrowserRouter>
+                        <MainAppRoutes />
+                    </BrowserRouter>
                 </div>
             </ThemeProvider>
         </div>
