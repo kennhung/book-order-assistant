@@ -1,5 +1,4 @@
-import React from 'react';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
+import React from 'react'
 import { Card, CardContent, Typography, CardActions, Button, Container, Grid } from '@material-ui/core'
 
 function Home() {

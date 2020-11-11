@@ -6,8 +6,9 @@ import { Drawer, List, Divider, IconButton, ListItem, ListItemIcon, ListItemText
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import SettingsIcon from '@material-ui/icons/Settings'
-import DashboardIcon from '@material-ui/icons/Dashboard'
+import HomeIcon from '@material-ui/icons/Home'
 import MenuBookIcon from '@material-ui/icons/MenuBook'
+import GroupIcon from '@material-ui/icons/Group'
 
 import useStyles from '../../useStyles'
 
@@ -22,7 +23,7 @@ function MainDrawer({ open, handleDrawerClose }: MainDrawerProps) {
 
     return (
         <Drawer
-            variant="permanent"
+            variant='permanent'
             className={clsx(classes.drawer, {
                 [classes.drawerOpen]: open,
                 [classes.drawerClose]: !open,
@@ -43,15 +44,21 @@ function MainDrawer({ open, handleDrawerClose }: MainDrawerProps) {
             <List>
                 <ListItem button selected>
                     <ListItemIcon>
-                        <DashboardIcon />
+                        <HomeIcon />
                     </ListItemIcon>
-                    <ListItemText primary={"Dashboard"} />
+                    <ListItemText primary={"Home"} />
                 </ListItem>
                 <ListItem button>
                     <ListItemIcon>
                         <MenuBookIcon />
                     </ListItemIcon>
-                    <ListItemText primary={"Books"} />
+                    <ListItemText primary={"My Orders"} />
+                </ListItem>
+                <ListItem button>
+                    <ListItemIcon>
+                        <GroupIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={"My Group Buys"} />
                 </ListItem>
             </List>
             <Divider />
