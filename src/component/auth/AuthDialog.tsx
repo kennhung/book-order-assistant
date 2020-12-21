@@ -5,7 +5,9 @@ import {
     Button, useMediaQuery, useTheme
 } from '@material-ui/core'
 
-import firebase, { auth } from '../../firebase'
+import { useFirebase } from 'react-redux-firebase'
+
+import firebase from 'firebase'
 
 type AuthDialogProps = {
     open: boolean,
@@ -13,6 +15,8 @@ type AuthDialogProps = {
 };
 
 function AuthDialog({ open, handleClose }: AuthDialogProps) {
+    const auth = useFirebase().auth();
+
     const uiConfig = {
         // Popup signin flow rather than redirect flow.
         signInFlow: 'popup',

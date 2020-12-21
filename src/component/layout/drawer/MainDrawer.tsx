@@ -1,7 +1,7 @@
 import React from 'react'
 import clsx from 'clsx'
 import { useTheme } from '@material-ui/core/styles'
-import { Drawer, List, Divider, IconButton, ListItem, ListItemIcon, ListItemText, SvgIconTypeMap } from '@material-ui/core'
+import { Drawer, List, Divider, IconButton, ListItem, ListItemIcon, ListItemText } from '@material-ui/core'
 import { useHistory, useLocation } from 'react-router-dom'
 
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'

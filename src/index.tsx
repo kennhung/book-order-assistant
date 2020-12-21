@@ -7,12 +7,12 @@ import reportWebVitals from './reportWebVitals'
 import { Provider } from 'react-redux'
 import { createFirestoreInstance } from 'redux-firestore'
 import { store } from './store'
-import firebase, { auth, firestore } from './firebase'
+import firebase from './firebase'
 import { ReactReduxFirebaseProvider } from 'react-redux-firebase'
 
 const rrfConfig = {
-    userProfile: "users",
-    useFirestoreForProfile: true
+    // userProfile: "users",
+    // useFirestoreForProfile: true
 }
 
 const rrfProps = {

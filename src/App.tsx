@@ -1,13 +1,17 @@
 import React, { useState } from 'react'
 import 'fontsource-roboto'
-import CssBaseline from '@material-ui/core/CssBaseline'
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
 import { BrowserRouter } from 'react-router-dom'
 
 import Appbar from './component/layout/appbar/Appbar'
 import MainDrawer from './component/layout/drawer/MainDrawer'
 import AuthDialog from './component/auth/AuthDialog'
 
+import { useSelector } from 'react-redux'
+import { isLoaded } from 'react-redux-firebase'
+import { storeTypes } from './store'
+
+import CssBaseline from '@material-ui/core/CssBaseline'
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
 import useStyles from './component/useStyles'
 import MainAppRoutes from './component/MainAppRoutes'
 import { ToastContainer } from 'react-toastify'
@@ -52,24 +56,28 @@ function App() {
         setIsDrawerOpen(false);
     };
 
+    const auth = useSelector((state: storeTypes) => state.firebase.auth);
+
     return (
         <div className={classes.root}>
-            <ThemeProvider theme={theme}>
-                <BrowserRouter>
-                    <CssBaseline />
-                    <ToastContainer />
-                    <Appbar drawerOpen={isDrawerOpen} handleDrawerOpen={handleDrawerOpen} handleLoginBtnClick={() => {
-                        setOpenLoginModal(true);
-                    }} />
-                    <MainDrawer open={isDrawerOpen} handleDrawerClose={handleDrawerClose} />
-                    <AuthDialog open={openLoginModal} handleClose={() => {
-                        setOpenLoginModal(false);
-                    }} />
-                    <div className={classes.mainContent}>
-                        <MainAppRoutes />
-                    </div>
-                </BrowserRouter>
-            </ThemeProvider>
+            {isLoaded(auth) ?
+                <ThemeProvider theme={theme}>
+                    <BrowserRouter>
+                        <CssBaseline />
+                        <ToastContainer />
+                        <Appbar drawerOpen={isDrawerOpen} handleDrawerOpen={handleDrawerOpen} handleLoginBtnClick={() => {
+                            setOpenLoginModal(true);
+                        }} />
+                        <MainDrawer open={isDrawerOpen} handleDrawerClose={handleDrawerClose} />
+                        <AuthDialog open={openLoginModal} handleClose={() => {
+                            setOpenLoginModal(false);
+                        }} />
+                        <div className={classes.mainContent}>
+                            <MainAppRoutes />
+                        </div>
+                    </BrowserRouter>
+                </ThemeProvider> : null
+            }
         </div>
     );
 }

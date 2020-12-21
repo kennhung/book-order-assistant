@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import clsx from 'clsx'
+
 import { AppBar, Toolbar, IconButton, Typography, InputBase, Badge, Button } from '@material-ui/core'
 import MenuIcon from '@material-ui/icons/Menu'
 import SearchIcon from '@material-ui/icons/Search'
 import NotificationsIcon from '@material-ui/icons/Notifications'
 import MoreIcon from '@material-ui/icons/MoreVert'
-import firebase, { auth } from '../../../firebase'
+
+import firebase from 'firebase'
+import { useFirebase } from 'react-redux-firebase'
 
 import useStyles from '../../useStyles'
 
@@ -20,6 +23,8 @@ type AppbarProps = {
 };
 
 export default function Appbar({ drawerOpen, handleDrawerOpen, handleLoginBtnClick }: AppbarProps) {
+    const auth = useFirebase().auth();
+
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
@@ -29,7 +34,7 @@ export default function Appbar({ drawerOpen, handleDrawerOpen, handleLoginBtnCli
         return auth.onAuthStateChanged((user) => {
             setLoginedUser(user);
         })
-    }, []);
+    }, [auth]);
 
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
