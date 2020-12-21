@@ -10,6 +10,8 @@ import AuthDialog from './component/auth/AuthDialog'
 
 import useStyles from './component/useStyles'
 import MainAppRoutes from './component/MainAppRoutes'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const theme = createMuiTheme({
     typography: {
@@ -55,7 +57,10 @@ function App() {
             <ThemeProvider theme={theme}>
                 <BrowserRouter>
                     <CssBaseline />
-                    <Appbar drawerOpen={isDrawerOpen} handleDrawerOpen={handleDrawerOpen} />
+                    <ToastContainer />
+                    <Appbar drawerOpen={isDrawerOpen} handleDrawerOpen={handleDrawerOpen} handleLoginBtnClick={() => {
+                        setOpenLoginModal(true);
+                    }} />
                     <MainDrawer open={isDrawerOpen} handleDrawerClose={handleDrawerClose} />
                     <AuthDialog open={openLoginModal} handleClose={() => {
                         setOpenLoginModal(false);

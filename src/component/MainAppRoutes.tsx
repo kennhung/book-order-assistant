@@ -4,6 +4,7 @@ import NotFoundPage from './NotFoundPage'
 
 import Home from './homepage/Home'
 import MyOrders from './order/MyOrders'
+import OrderForm from './order/OrderForm'
 
 function MainAppRoutes() {
     return (
@@ -14,6 +15,9 @@ function MainAppRoutes() {
                 </Route>
                 <Route path='/myorder'>
                     <MyOrders />
+                </Route>
+                <Route path='/order/form/:formId'>
+                    <OrderForm />
                 </Route>
                 <Route>
                     <NotFoundPage />

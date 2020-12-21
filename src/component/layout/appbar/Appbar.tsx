@@ -15,10 +15,11 @@ import UserAvatar from './UserAvatar'
 
 type AppbarProps = {
     drawerOpen: boolean,
-    handleDrawerOpen: () => void
+    handleDrawerOpen: () => void,
+    handleLoginBtnClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
 };
 
-export default function Appbar({ drawerOpen, handleDrawerOpen }: AppbarProps) {
+export default function Appbar({ drawerOpen, handleDrawerOpen, handleLoginBtnClick }: AppbarProps) {
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
@@ -112,7 +113,7 @@ export default function Appbar({ drawerOpen, handleDrawerOpen }: AppbarProps) {
                                     </IconButton>
                                 </div>
                             </> :
-                            <Button color="inherit">Login</Button>
+                            <Button color="inherit" onClick={handleLoginBtnClick}>Login</Button>
                     }
                 </Toolbar>
             </AppBar>
