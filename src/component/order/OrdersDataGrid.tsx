@@ -1,25 +1,57 @@
-import React, { useState } from 'react'
-import { DataGrid, ColDef } from '@material-ui/data-grid'
+import React, { useMemo } from 'react'
+import { CircularProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core';
 
-const columns: ColDef[] = [
-    {
-        field: 'timeStamp', headerName: 'Time', width: 250, valueFormatter: (params: any) => {
-            return new Date(params.value.seconds * 1000).toLocaleString();
+type OrdersDataGridProps = {
+    orders: [any],
+    loading: boolean
+}
+
+function OrdersDataGrid({ orders, loading }: OrdersDataGridProps) {
+    const rows = useMemo<any>(() => {
+        if (orders) {
+            return orders.map((v) => {
+                return {
+                    id: v.id,
+                    timeStamp: v.timeStamp,
+                    bookName: "n/a",
+                    amount: v.amount,
+                    status: "n/a"
+                }
+            });
         }
-    },
-    { field: 'bookName', headerName: 'Book Name', width: 200 },
-    { field: 'amount', headerName: 'Amount', width: 200 },
-    { field: 'status', headerName: 'Status', width: 200 }
-];
 
-function OrdersDataGrid() {
-
-    const [rows, setRows] = useState<any>([]);
+        return [];
+    }, [orders]);
 
     return (
-        <div style={{ height: 300, width: '100%' }}>
-            <DataGrid rows={rows} columns={columns} />
-        </div>
+        !loading ?
+            <TableContainer>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Time</TableCell>
+                            <TableCell align="right">Book Name</TableCell>
+                            <TableCell align="right">Amount</TableCell>
+                            <TableCell align="right">Status</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {rows.map((row: any) => (
+                            <TableRow key={row.id}>
+                                <TableCell component="th" scope="row">
+                                    {new Date(row.timeStamp.seconds * 1000).toLocaleString()}
+                                </TableCell>
+                                <TableCell align="right">{row.bookName}</TableCell>
+                                <TableCell align="right">{row.amount}</TableCell>
+                                <TableCell align="right">{row.status}</TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer> :
+            <div style={{ textAlign: "center" }}>
+                <CircularProgress />
+            </div>
     )
 }
 

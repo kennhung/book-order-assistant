@@ -6,9 +6,7 @@ import Appbar from './component/layout/appbar/Appbar'
 import MainDrawer from './component/layout/drawer/MainDrawer'
 import AuthDialog from './component/auth/AuthDialog'
 
-import { useSelector } from 'react-redux'
-import { isLoaded } from 'react-redux-firebase'
-import { storeTypes } from './store'
+import { isLoaded, useFirebase } from 'react-redux-firebase'
 
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
@@ -56,7 +54,7 @@ function App() {
         setIsDrawerOpen(false);
     };
 
-    const auth = useSelector((state: storeTypes) => state.firebase.auth);
+    const auth = useFirebase().auth();
 
     return (
         <div className={classes.root}>
