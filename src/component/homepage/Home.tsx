@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, CardContent, Typography, CardActions, Button, Container, Grid } from '@material-ui/core'
+import { Card, CardContent, Typography, Container, Grid } from '@material-ui/core'
 
 function Home() {
     return (

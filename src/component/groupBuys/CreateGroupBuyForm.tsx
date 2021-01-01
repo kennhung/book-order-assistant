@@ -1,10 +1,10 @@
 import { Button, Card, CardContent, Container, createStyles, Divider, Grid, makeStyles, TextField, Theme, Typography } from '@material-ui/core'
-import { Alert, AlertTitle } from '@material-ui/lab'
+import { Alert } from '@material-ui/lab'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
-import { useHistory, useParams } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 
-import { useFirebase, useFirestore, useFirestoreConnect } from 'react-redux-firebase'
+import { useFirebase, useFirestore } from 'react-redux-firebase'
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

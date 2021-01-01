@@ -8,11 +8,8 @@ import OrderForm from './order/OrderForm'
 import MyGroupBuys from './groupBuys/MyGroupBuys'
 import CreateGroupBuyForm from './groupBuys/CreateGroupBuyForm'
 import GroupBuyDetail from './groupBuys/GroupBuyDetail'
-import { isLoaded, useFirebase } from 'react-redux-firebase'
 
 function MainAppRoutes() {
-    const auth = useFirebase().auth();
-
     return (
         <>
             <Switch>
