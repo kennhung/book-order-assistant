@@ -1,11 +1,9 @@
+import { Card, CardContent, Container, createStyles, Grid, makeStyles, Theme, Typography } from '@material-ui/core'
 import React from 'react'
-import { makeStyles, createStyles } from '@material-ui/styles'
-import { Card, CardContent, Container, Grid, Theme, Typography } from '@material-ui/core'
-import OrdersDataGrid from './OrdersDataGrid'
-
-import { useSelector } from 'react-redux'
-import { useFirestoreConnect, isLoaded, useFirebase } from 'react-redux-firebase'
-import { storeTypes } from '../../store'
+import { useSelector } from 'react-redux';
+import { isLoaded, useFirebase, useFirestoreConnect } from 'react-redux-firebase';
+import { storeTypes } from '../../store';
+import GroupBuysDataGrid from './GroupBuysDataGrid';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -15,18 +13,18 @@ const useStyles = makeStyles((theme: Theme) =>
     })
 );
 
-function MyOrders() {
+function MyGroupBuys() {
     const classes = useStyles();
     const auth = useFirebase().auth();
 
     useFirestoreConnect([
         {
-            collection: 'orders',
-            where: [['orderOwner', '==', auth.currentUser ? auth.currentUser.uid : ""]]
+            collection: 'groupBuys',
+            where: [['organizer', "array-contains", auth.currentUser ? auth.currentUser.uid : ""]]
         }
     ]);
 
-    const orders = useSelector((state: storeTypes) => state.firestore.ordered.orders);
+    const groupBuys = useSelector((state: storeTypes) => state.firestore.ordered.groupBuys);
 
     return (
         <Container maxWidth={false}>
@@ -37,12 +35,12 @@ function MyOrders() {
                             <Grid container>
                                 <Grid item xs={12}>
                                     <Typography variant="h5">
-                                        我的訂單
+                                        我的團購
                                     </Typography>
                                 </Grid>
 
                                 <Grid item xs={12} md={6} className={classes.dataGridWrapper}>
-                                    <OrdersDataGrid orders={orders} loading={!isLoaded(orders)} />
+                                    <GroupBuysDataGrid groupBuys={groupBuys} loading={!isLoaded(groupBuys)}  />
                                 </Grid>
                             </Grid>
                         </CardContent>
@@ -53,4 +51,4 @@ function MyOrders() {
     )
 }
 
-export default MyOrders
+export default MyGroupBuys

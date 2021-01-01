@@ -1,14 +1,48 @@
-import { Button, Card, CardContent, Container, Divider, Grid, TextField, Typography } from '@material-ui/core'
-import { Alert } from '@material-ui/lab'
+import { Button, Card, CardContent, Container, createStyles, Divider, Grid, makeStyles, TextField, Theme, Typography } from '@material-ui/core'
+import { Alert, AlertTitle } from '@material-ui/lab'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
 
 import { firestore, auth } from '../../firebase'
+import { useFirestoreConnect } from 'react-redux-firebase'
+import { useSelector } from 'react-redux'
+import { storeTypes } from '../../store'
+import { first } from 'lodash'
 
+const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+        title: {
+            margin: theme.spacing(0, 0, 2, 0)
+        },
+        infoAlert: {
+            margin: theme.spacing(2, 0)
+        },
+        divider: {
+            margin: theme.spacing(2, 0)
+        },
+        formContainer: {
+            padding: theme.spacing(0, 2),
+        },
+        btnContainer: {
+            padding: theme.spacing(0, 2),
+            marginTop: theme.spacing(2)
+        }
+    })
+);
 
 function OrderForm() {
+    const classes = useStyles();
     const { formId } = useParams<{ formId: string }>();
+
+    useFirestoreConnect([
+        {
+            collection: 'groupBuys',
+            doc: formId
+        }
+    ]);
+
+    const groupBuy: any = first(useSelector((state: storeTypes) => state.firestore.ordered.groupBuys));
 
     const [name, setName] = useState("");
     const [stuId, setStuId] = useState("");
@@ -47,7 +81,7 @@ function OrderForm() {
             amount,
             timeStamp: new Date()
         }).then(() => {
-            toast.success("Order submitted");
+            toast.success("訂單已送出");
         }).catch((err) => {
             toast.error(err.message);
             console.log(err);
@@ -60,9 +94,20 @@ function OrderForm() {
                 <Grid item xs={12} md={6}>
                     <Card>
                         <CardContent>
-                            <Typography variant="h5" color="textPrimary">
-                                Order Form
+                            <Typography variant="h5" color="textPrimary" className={classes.title}>
+                                訂購單 - {groupBuy?.bookName}
                             </Typography>
+
+                            <Typography variant="body1" color="textPrimary">
+                                價格：{groupBuy?.price} / 本
+                            </Typography>
+
+                            {groupBuy?.notes ?
+                                <Alert severity="info" className={classes.infoAlert}>
+                                    <AlertTitle>注意事項</AlertTitle>
+                                    {groupBuy?.notes}
+                                </Alert> : null
+                            }
 
                             {
                                 errorMessage ? <Alert variant="filled" severity="error">
@@ -70,12 +115,12 @@ function OrderForm() {
                                 </Alert> : null
                             }
 
-                            <Divider style={{ margin: "1rem 0" }} />
+                            <Divider className={classes.divider} />
 
-                            <Grid container style={{ padding: "0 2rem" }} spacing={3}>
+                            <Grid container className={classes.formContainer} spacing={3}>
                                 <Grid item xs={12} md={6}>
                                     <TextField
-                                        label="Name"
+                                        label="姓名"
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
                                         required
@@ -84,7 +129,7 @@ function OrderForm() {
                                 </Grid>
                                 <Grid item xs={12} md={6}>
                                     <TextField
-                                        label="StudentID"
+                                        label="學號"
                                         value={stuId}
                                         onChange={(e) => setStuId(e.target.value)}
                                         required
@@ -93,7 +138,7 @@ function OrderForm() {
                                 </Grid>
                                 <Grid item xs={12} md={6}>
                                     <TextField
-                                        label="Department"
+                                        label="系級"
                                         value={department}
                                         onChange={(e) => setDepartment(e.target.value)}
                                         required
@@ -102,7 +147,7 @@ function OrderForm() {
                                 </Grid>
                                 <Grid item xs={12} md={6}>
                                     <TextField
-                                        label="Amount"
+                                        label="數量"
                                         type="number"
                                         value={amount}
                                         onChange={(e) => setAmount(isNaN(parseInt(e.target.value)) ? null : parseInt(e.target.value))}
@@ -113,9 +158,9 @@ function OrderForm() {
                                 </Grid>
                             </Grid>
 
-                            <Grid container style={{ padding: "0rem 2rem", marginTop: "2rem" }} justify="flex-end">
+                            <Grid container className={classes.btnContainer} justify="flex-end">
                                 <Grid item xs={"auto"}>
-                                    <Button variant="contained" color="primary" onClick={submitForm}>Submit</Button>
+                                    <Button variant="contained" color="primary" onClick={submitForm}>送出</Button>
                                 </Grid>
                             </Grid>
                         </CardContent>

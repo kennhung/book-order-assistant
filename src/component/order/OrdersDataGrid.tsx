@@ -1,27 +1,49 @@
-import React, { useMemo } from 'react'
-import { CircularProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core';
+import React from 'react'
+import { CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core'
+import { storeTypes } from '../../store'
+import { useFirestoreConnect } from 'react-redux-firebase'
+import { useSelector } from 'react-redux'
 
 type OrdersDataGridProps = {
     orders: [any],
     loading: boolean
 }
 
-function OrdersDataGrid({ orders, loading }: OrdersDataGridProps) {
-    const rows = useMemo<any>(() => {
-        if (orders) {
-            return orders.map((v) => {
-                return {
-                    id: v.id,
-                    timeStamp: v.timeStamp,
-                    bookName: "n/a",
-                    amount: v.amount,
-                    status: "n/a"
-                }
-            });
-        }
+export const statusStrings: any = {
+    pending: "等待中",
+    pendingPay: "等待付款中",
+    paid: "已付款",
+    pendingTake: "等待取書中",
+    taken: "已取書"
+}
 
-        return [];
-    }, [orders]);
+function OrderRow({ order }: { order: any }) {
+
+    useFirestoreConnect([
+        {
+            collection: 'groupBuys',
+            doc: order.orderTarget
+        }
+    ]);
+
+    const groupBuy = useSelector((state: storeTypes) => {
+        const data = state.firestore.data;
+
+        return data.groupBuys && data.groupBuys[order.orderTarget];
+    });
+
+    return <TableRow key={order.id}>
+        <TableCell component="th" scope="row">
+            {new Date(order.timeStamp.seconds * 1000).toLocaleString()}
+        </TableCell>
+        <TableCell>{order.department}{" "}{order.name}</TableCell>
+        <TableCell>{groupBuy?.bookName}</TableCell>
+        <TableCell align="right">{order.amount}</TableCell>
+        <TableCell align="right">{statusStrings[order.status]}</TableCell>
+    </TableRow>
+}
+
+function OrdersDataGrid({ orders, loading }: OrdersDataGridProps) {
 
     return (
         !loading ?
@@ -29,23 +51,17 @@ function OrdersDataGrid({ orders, loading }: OrdersDataGridProps) {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Time</TableCell>
-                            <TableCell align="right">Book Name</TableCell>
-                            <TableCell align="right">Amount</TableCell>
-                            <TableCell align="right">Status</TableCell>
+                            <TableCell>訂購時間</TableCell>
+                            <TableCell>訂購人</TableCell>
+                            <TableCell>書名</TableCell>
+                            <TableCell align="right">數量數量</TableCell>
+                            <TableCell align="right">狀態</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows.map((row: any) => (
-                            <TableRow key={row.id}>
-                                <TableCell component="th" scope="row">
-                                    {new Date(row.timeStamp.seconds * 1000).toLocaleString()}
-                                </TableCell>
-                                <TableCell align="right">{row.bookName}</TableCell>
-                                <TableCell align="right">{row.amount}</TableCell>
-                                <TableCell align="right">{row.status}</TableCell>
-                            </TableRow>
-                        ))}
+                        {orders.map((order: any) => {
+                            return <OrderRow key={order.id} order={order} />
+                        })}
                     </TableBody>
                 </Table>
             </TableContainer> :
