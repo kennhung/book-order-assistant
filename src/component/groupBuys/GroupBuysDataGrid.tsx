@@ -15,15 +15,14 @@ function GroupBuyRow({ groupBuy }: { groupBuy: any }) {
 
     useFirestoreConnect([
         {
-            collection: 'orders',
-            where: [["orderTarget", "==", groupBuy.id]]
+            collection: 'orders'
         }
     ]);
 
     const orders = useSelector((state: storeTypes) => {
         const data = state.firestore.data;
 
-        return data.orders && Object.keys(data.orders).map((key) => { 
+        return data.orders && Object.keys(data.orders).map((key) => {
             return data.orders[key];
         }).filter(({ orderTarget }: any) => {
             return orderTarget === groupBuy.id

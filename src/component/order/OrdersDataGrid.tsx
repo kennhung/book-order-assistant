@@ -1,9 +1,10 @@
-import React from 'react'
-import { CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core'
+import React, { useEffect, useState } from 'react'
+import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Popover, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip, Typography } from '@material-ui/core'
 import { storeTypes } from '../../store'
-import { useFirestoreConnect } from 'react-redux-firebase'
+import { useFirestore, useFirestoreConnect } from 'react-redux-firebase'
 import { useSelector } from 'react-redux'
-import { group } from 'console'
+import PaymentIcon from '@material-ui/icons/Payment'
+import BookIcon from '@material-ui/icons/Book';
 
 type OrdersDataGridProps = {
     orders: [any],
@@ -34,6 +35,7 @@ function getOrderStatus(order: any, groupBuy: any): any {
 }
 
 function OrderRow({ order, groupBuyView }: { order: any, groupBuyView: boolean }) {
+    const firestore = useFirestore();
 
     useFirestoreConnect([
         {
@@ -48,6 +50,36 @@ function OrderRow({ order, groupBuyView }: { order: any, groupBuyView: boolean }
         return data.groupBuys && data.groupBuys[order.orderTarget];
     });
 
+    const [payAnchorEl, setPayAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+    const handlePayClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setPayAnchorEl(event.currentTarget);
+    };
+    const handlePayClose = () => {
+        setPayAnchorEl(null);
+    };
+
+    const [openTakeDialog, setOpenTakeDialog] = useState(false);
+    const handleTakeDialogClose = () => {
+        setOpenTakeDialog(false);
+        if (order && (order.taken || order.taken === 0)) {
+            setTakenCount(order.taken);
+        }
+    }
+    const [takenCount, setTakenCount] = useState<number | null>(0);
+    useEffect(() => {
+        if (order && (order.taken || order.taken === 0)) {
+            setTakenCount(order.taken);
+        }
+    }, [order]);
+
+    const takeDialogSubmit = () => {
+        firestore.collection("orders").doc(order.id).update({
+            taken: takenCount
+        }).then(() => {
+            handleTakeDialogClose()
+        });
+    }
+
     return <TableRow hover key={order.id}>
         <TableCell component="th" scope="row">
             {new Date(order.timeStamp.seconds * 1000).toLocaleString()}
@@ -56,7 +88,77 @@ function OrderRow({ order, groupBuyView }: { order: any, groupBuyView: boolean }
         {!groupBuyView ? <TableCell>{groupBuy?.bookName}</TableCell> : null}
         <TableCell align="right">{order.amount}</TableCell>
         <TableCell align="right">{groupBuy && order ? orderStatusString[getOrderStatus(order, groupBuy)] : "n/a"}</TableCell>
-    </TableRow>
+        {
+            groupBuyView ? <TableCell>
+                <Tooltip title="付款">
+                    <div style={{ display: "inline" }}>
+                        <IconButton size="small" disabled={order.paid} onClick={handlePayClick}>
+                            <PaymentIcon />
+                        </IconButton>
+                    </div>
+                </Tooltip>
+                <Tooltip title="取書">
+                    <IconButton size="small" color={order.amount > (order.taken || 0) && order.paid ? "primary" : "default"} onClick={() => { setOpenTakeDialog(true) }}>
+                        <BookIcon />
+                    </IconButton>
+                </Tooltip>
+            </TableCell> : null
+        }
+        <Popover
+            open={Boolean(payAnchorEl)}
+            anchorEl={payAnchorEl}
+            onClose={handlePayClose}
+            anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'center',
+            }}
+            transformOrigin={{
+                vertical: 'top',
+                horizontal: 'center',
+            }}
+        >
+            <div style={{
+                padding: ".75rem",
+                textAlign: "center"
+            }}>
+                <Typography>確認付款</Typography>
+                <Button variant="contained" color="primary" onClick={() => {
+                    firestore.collection("orders").doc(order.id).update({
+                        paid: true
+                    })
+                    handlePayClose();
+                }}>是</Button>
+            </div>
+        </Popover>
+        <Dialog
+            open={openTakeDialog}
+            onClose={handleTakeDialogClose}
+        >
+            <DialogTitle id="confirmation-dialog-title">取書</DialogTitle>
+            <DialogContent dividers>
+                <TextField
+                    label="已取數量"
+                    type="number"
+                    value={takenCount}
+                    error={takenCount === null || takenCount > order.amount || takenCount < 0}
+                    onChange={(e) => setTakenCount(isNaN(parseInt(e.target.value)) ? null : parseInt(e.target.value))}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                            takeDialogSubmit();
+                        }
+                    }}
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button autoFocus onClick={handleTakeDialogClose} color="primary">
+                    Cancel
+                </Button>
+                <Button disabled={takenCount === null} onClick={takeDialogSubmit} color="primary">
+                    Ok
+                </Button>
+            </DialogActions>
+        </Dialog>
+    </TableRow >
 }
 
 function OrdersDataGrid({ orders, groupBuyView = false, loading }: OrdersDataGridProps) {
@@ -72,6 +174,7 @@ function OrdersDataGrid({ orders, groupBuyView = false, loading }: OrdersDataGri
                             {!groupBuyView ? <TableCell>書名</TableCell> : null}
                             <TableCell align="right">數量</TableCell>
                             <TableCell align="right">狀態</TableCell>
+                            {groupBuyView ? <TableCell></TableCell> : null}
                         </TableRow>
                     </TableHead>
                     <TableBody>

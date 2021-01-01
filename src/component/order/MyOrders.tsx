@@ -41,7 +41,7 @@ function MyOrders() {
                                     </Typography>
                                 </Grid>
 
-                                <Grid item xs={12} md={6} className={classes.dataGridWrapper}>
+                                <Grid item xs={12} md={8} xl={6} className={classes.dataGridWrapper}>
                                     <OrdersDataGrid orders={orders} loading={!isLoaded(orders)} />
                                 </Grid>
                             </Grid>

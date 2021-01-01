@@ -2,7 +2,7 @@ import { Button, Card, CardContent, Container, createStyles, Divider, Grid, make
 import { Alert, AlertTitle } from '@material-ui/lab'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 
 import { useFirebase, useFirestore, useFirestoreConnect } from 'react-redux-firebase'
 
@@ -31,6 +31,8 @@ function CreateGroupBuyForm() {
     const classes = useStyles();
     const auth = useFirebase().auth();
     const firestore = useFirestore();
+
+    const history = useHistory();
 
     const [checkRequired, setCheckRequired] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -63,6 +65,7 @@ function CreateGroupBuyForm() {
             price: price
         }).then(({ id }) => {
             toast.success("團購已建立");
+            history.push(`/groupBuy/detail/${id}`);
         }).catch((err) => {
             toast.error(err.message);
             console.log(err);
@@ -76,7 +79,7 @@ function CreateGroupBuyForm() {
                     <Card>
                         <CardContent>
                             <Typography variant="h5" color="textPrimary" className={classes.title}>
-                                新團購
+                                新增團購
                             </Typography>
 
                             {

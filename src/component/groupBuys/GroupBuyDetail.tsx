@@ -1,18 +1,30 @@
-import { Switch, Card, CardContent, CardHeader, CircularProgress, Container, createStyles, Divider, FormControlLabel, Grid, makeStyles, Theme, Typography, Button } from '@material-ui/core'
+import { Switch, Card, CardContent, CardHeader, CircularProgress, Container, createStyles, Divider, FormControlLabel, Grid, makeStyles, Theme, Typography, Button, IconButton, Menu, MenuItem, ListItemIcon, Snackbar } from '@material-ui/core'
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline'
 import HighlightOffIcon from '@material-ui/icons/HighlightOff'
-import { sum } from 'lodash';
-import React, { useMemo } from 'react'
-import { useSelector } from 'react-redux';
-import { isLoaded, useFirestore, useFirestoreConnect } from 'react-redux-firebase';
+import MoreVertIcon from '@material-ui/icons/MoreVert'
+import EditIcon from '@material-ui/icons/Edit'
+import DeleteSweepIcon from '@material-ui/icons/DeleteSweep'
+import DeleteIcon from '@material-ui/icons/Delete'
+import { sum } from 'lodash'
+import React, { useMemo, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { isLoaded, useFirestore, useFirestoreConnect } from 'react-redux-firebase'
 import { useParams } from 'react-router-dom'
-import { storeTypes } from '../../store';
-import OrdersDataGrid from '../order/OrdersDataGrid';
+import { storeTypes } from '../../store'
+import OrdersDataGrid from '../order/OrdersDataGrid'
+import { Alert } from '@material-ui/lab'
+import { toast } from 'react-toastify'
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         divider: {
-            margin: theme.spacing(2, 0)
+            margin: theme.spacing(1.5, 0)
+        },
+        cardHeader: {
+            paddingBottom: theme.spacing(.5)
+        },
+        cardContent: {
+            paddingTop: theme.spacing(.5)
         },
         headerActionOpen: {
             color: theme.palette.success.main
@@ -33,6 +45,15 @@ const useStyles = makeStyles((theme: Theme) =>
         }
     })
 );
+
+const copyToClipboard = (text: string) => {
+    var textField = document.createElement('textarea');
+    textField.innerText = text;
+    document.body.appendChild(textField);
+    textField.select();
+    document.execCommand('copy');
+    textField.remove();
+};
 
 function GroupBuyDetail() {
     const classes = useStyles();
@@ -74,6 +95,21 @@ function GroupBuyDetail() {
         };
     }, [orders]);
 
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const [snackBarOpen, setSnackBarOpen] = useState(false);
+    const handleSnackBarClose = () => {
+        setSnackBarOpen(false);
+    }
+
     return (
         <Container maxWidth={false}>
             <Grid container spacing={3}>
@@ -83,28 +119,45 @@ function GroupBuyDetail() {
                             <Grid item xs={12} md={6} lg={4}>
                                 <Card>
                                     <CardHeader
+                                        className={classes.cardHeader}
                                         title="團購單"
                                         subheader={groupBuy.bookName}
                                         action={
-                                            <Grid
-                                                container
-                                                spacing={1}
-                                                className={groupBuy.isOpen ? classes.headerActionOpen : classes.headerActionClosed}
-                                            >
-                                                <Grid item xs="auto">
-                                                    <Typography>{groupBuy.isOpen ? "開放中" : "訂單關閉"}</Typography>
-                                                </Grid>
-                                                <Grid item xs="auto">
-                                                    {groupBuy.isOpen ?
-                                                        <CheckCircleOutlineIcon /> :
-                                                        <HighlightOffIcon />
-                                                    }
-                                                </Grid>
-                                            </Grid>
+                                            <IconButton onClick={handleClick}>
+                                                <MoreVertIcon />
+                                            </IconButton>
                                         }
                                     />
-                                    <CardContent>
+                                    <CardContent className={classes.cardContent}>
                                         <Typography variant="body1">價格：{groupBuy.price}</Typography>
+                                        <Typography variant="body2">{groupBuy.notes}</Typography>
+
+                                        <Grid
+                                            container
+                                            spacing={1}
+                                            style={{ marginTop: ".5rem" }}
+                                            className={groupBuy.isOpen ? classes.headerActionOpen : classes.headerActionClosed}
+                                        >
+                                            <Grid item xs="auto">
+                                                {groupBuy.isOpen ?
+                                                    <CheckCircleOutlineIcon /> :
+                                                    <HighlightOffIcon />
+                                                }
+                                            </Grid>
+                                            <Grid item xs="auto">
+                                                <Typography>{groupBuy.isOpen ? "開放中" : "訂單關閉"}</Typography>
+                                            </Grid>
+                                        </Grid>
+
+                                        <Typography variant="subtitle1">訂購連結</Typography>
+                                        <Typography variant="subtitle2" style={{ overflowWrap: "anywhere" }}>{`${window.location.origin}/order/form/${groupBuyId}`}</Typography>
+                                        <div style={{ textAlign: "right" }}>
+                                            <Button onClick={() => {
+                                                copyToClipboard(`${window.location.origin}/order/form/${groupBuyId}`)
+                                                toast.success("連結已複製")
+                                            }} size="small">複製連結</Button>
+                                        </div>
+
                                         <Divider className={classes.divider} />
                                         {
                                             isLoaded(orders) ? <>
@@ -175,7 +228,40 @@ function GroupBuyDetail() {
                         </Grid>
                 }
             </Grid>
-        </Container>
+            <Menu
+                anchorEl={anchorEl}
+                keepMounted
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+            >
+                <MenuItem onClick={() => {
+                    handleClose();
+                    setSnackBarOpen(true);
+                }}>
+                    <ListItemIcon><EditIcon /></ListItemIcon>
+                    <Typography>編輯</Typography>
+                </MenuItem>
+                <MenuItem onClick={() => {
+                    handleClose();
+                    setSnackBarOpen(true);
+                }}>
+                    <ListItemIcon><DeleteSweepIcon /></ListItemIcon>
+                    <Typography>清空訂單</Typography>
+                </MenuItem>
+                <MenuItem onClick={() => {
+                    handleClose();
+                    setSnackBarOpen(true);
+                }}>
+                    <ListItemIcon><DeleteIcon /></ListItemIcon>
+                    <Typography>刪除團購</Typography>
+                </MenuItem>
+            </Menu>
+            <Snackbar open={snackBarOpen} autoHideDuration={6000} onClose={handleSnackBarClose}>
+                <Alert onClose={handleSnackBarClose} severity="error">
+                    尚未支援此功能
+                </Alert>
+            </Snackbar>
+        </Container >
     )
 }
 

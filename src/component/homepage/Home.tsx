@@ -18,9 +18,6 @@ function Home() {
                                 團購訂書的好用工具
                             </Typography>
                         </CardContent>
-                        <CardActions>
-                            <Button size="small">Learn More</Button>
-                        </CardActions>
                     </Card>
                 </Grid>
             </Grid>

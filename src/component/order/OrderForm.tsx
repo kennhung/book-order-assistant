@@ -2,7 +2,7 @@ import { Button, Card, CardContent, Container, createStyles, Divider, Grid, make
 import { Alert, AlertTitle } from '@material-ui/lab'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 
 import { firestore, auth } from '../../firebase'
 import { useFirestoreConnect } from 'react-redux-firebase'
@@ -33,6 +33,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 function OrderForm() {
     const classes = useStyles();
+    const history = useHistory();
     const { formId } = useParams<{ formId: string }>();
 
     useFirestoreConnect([
@@ -82,6 +83,7 @@ function OrderForm() {
             timeStamp: new Date()
         }).then(() => {
             toast.success("訂單已送出");
+            history.push('/');
         }).catch((err) => {
             toast.error(err.message);
             console.log(err);
