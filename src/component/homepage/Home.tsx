@@ -17,6 +17,9 @@ function Home() {
                             <Typography variant="body2" component="p">
                                 團購訂書的好用工具
                             </Typography>
+                            <Typography variant="body2" component="p">
+                                請先從右上角登入後繼續使用
+                            </Typography>
                         </CardContent>
                     </Card>
                 </Grid>

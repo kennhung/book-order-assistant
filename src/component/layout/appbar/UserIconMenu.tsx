@@ -1,5 +1,7 @@
 import React from 'react'
-import { Menu, MenuItem } from '@material-ui/core'
+import { Divider, Menu, MenuItem } from '@material-ui/core'
+import { useFirebase } from 'react-redux-firebase'
+import { useHistory } from 'react-router-dom';
 
 type UserIconMenuProps = {
     anchorEl: HTMLElement | null,
@@ -8,6 +10,9 @@ type UserIconMenuProps = {
 }
 
 function UserIconMenu({ anchorEl, open, handleClose }: UserIconMenuProps) {
+    const firebase = useFirebase();
+    const history = useHistory();
+
     return (
         <Menu
             anchorEl={anchorEl}
@@ -19,6 +24,12 @@ function UserIconMenu({ anchorEl, open, handleClose }: UserIconMenuProps) {
         >
             <MenuItem onClick={handleClose}>Profile</MenuItem>
             <MenuItem onClick={handleClose}>My account</MenuItem>
+            <Divider />
+            <MenuItem onClick={() => { 
+                firebase.logout();
+                handleClose();
+                history.push('/');
+            }}>Logout</MenuItem>
         </Menu>
     )
 }

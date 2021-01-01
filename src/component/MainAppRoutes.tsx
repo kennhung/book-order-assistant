@@ -8,19 +8,22 @@ import OrderForm from './order/OrderForm'
 import MyGroupBuys from './groupBuys/MyGroupBuys'
 import CreateGroupBuyForm from './groupBuys/CreateGroupBuyForm'
 import GroupBuyDetail from './groupBuys/GroupBuyDetail'
+import { isLoaded, useFirebase } from 'react-redux-firebase'
 
 function MainAppRoutes() {
+    const auth = useFirebase().auth();
+
     return (
         <>
             <Switch>
                 <Route path='/' exact>
                     <Home />
                 </Route>
-                <Route path='/myorder'>
-                    <MyOrders />
-                </Route>
                 <Route path='/order/form/:formId'>
                     <OrderForm />
+                </Route>
+                <Route path='/myorder'>
+                    <MyOrders />
                 </Route>
                 <Route path='/myGroupBuys'>
                     <MyGroupBuys />

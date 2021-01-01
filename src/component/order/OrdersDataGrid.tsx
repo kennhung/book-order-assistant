@@ -92,13 +92,13 @@ function OrderRow({ order, groupBuyView }: { order: any, groupBuyView: boolean }
             groupBuyView ? <TableCell>
                 <Tooltip title="付款">
                     <div style={{ display: "inline" }}>
-                        <IconButton size="small" disabled={order.paid} onClick={handlePayClick}>
+                        <IconButton size="small" disabled={order.paid || groupBuy?.end} onClick={handlePayClick}>
                             <PaymentIcon />
                         </IconButton>
                     </div>
                 </Tooltip>
                 <Tooltip title="取書">
-                    <IconButton size="small" color={order.amount > (order.taken || 0) && order.paid ? "primary" : "default"} onClick={() => { setOpenTakeDialog(true) }}>
+                    <IconButton size="small" disabled={groupBuy?.end} color={order.amount > (order.taken || 0) && order.paid ? "primary" : "default"} onClick={() => { setOpenTakeDialog(true) }}>
                         <BookIcon />
                     </IconButton>
                 </Tooltip>

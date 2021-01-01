@@ -5,7 +5,7 @@ import { toast } from 'react-toastify'
 import { useHistory, useParams } from 'react-router-dom'
 
 import { firestore, auth } from '../../firebase'
-import { useFirestoreConnect } from 'react-redux-firebase'
+import { isLoaded, useFirestoreConnect } from 'react-redux-firebase'
 import { useSelector } from 'react-redux'
 import { storeTypes } from '../../store'
 import { first } from 'lodash'
@@ -119,52 +119,64 @@ function OrderForm() {
 
                             <Divider className={classes.divider} />
 
-                            <Grid container className={classes.formContainer} spacing={3}>
-                                <Grid item xs={12} md={6}>
-                                    <TextField
-                                        label="姓名"
-                                        value={name}
-                                        onChange={(e) => setName(e.target.value)}
-                                        required
-                                        error={checkRequired && name.length <= 0}
-                                    />
-                                </Grid>
-                                <Grid item xs={12} md={6}>
-                                    <TextField
-                                        label="學號"
-                                        value={stuId}
-                                        onChange={(e) => setStuId(e.target.value)}
-                                        required
-                                        error={checkRequired && stuId.length <= 0}
-                                    />
-                                </Grid>
-                                <Grid item xs={12} md={6}>
-                                    <TextField
-                                        label="系級"
-                                        value={department}
-                                        onChange={(e) => setDepartment(e.target.value)}
-                                        required
-                                        error={checkRequired && department.length <= 0}
-                                    />
-                                </Grid>
-                                <Grid item xs={12} md={6}>
-                                    <TextField
-                                        label="數量"
-                                        type="number"
-                                        value={amount}
-                                        onChange={(e) => setAmount(isNaN(parseInt(e.target.value)) ? null : parseInt(e.target.value))}
-                                        required
-                                        error={amount == null || amount < 1}
-                                        helperText={amount && amount < 1 ? "Should not less then one" : null}
-                                    />
-                                </Grid>
-                            </Grid>
+                            {
+                                isLoaded(auth) && !auth.currentUser ? <Alert variant="filled" severity="warning">
+                                    請先登入後繼續訂購
+                                </Alert> :
+                                    groupBuy && !groupBuy.isOpen ?
+                                        <Alert variant="filled" severity="warning">
+                                            團購已停止接收訂單
+                                        </Alert>
+                                        :
+                                        <>
+                                            <Grid container className={classes.formContainer} spacing={3}>
+                                                <Grid item xs={12} md={6}>
+                                                    <TextField
+                                                        label="姓名"
+                                                        value={name}
+                                                        onChange={(e) => setName(e.target.value)}
+                                                        required
+                                                        error={checkRequired && name.length <= 0}
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={12} md={6}>
+                                                    <TextField
+                                                        label="學號"
+                                                        value={stuId}
+                                                        onChange={(e) => setStuId(e.target.value)}
+                                                        required
+                                                        error={checkRequired && stuId.length <= 0}
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={12} md={6}>
+                                                    <TextField
+                                                        label="系級"
+                                                        value={department}
+                                                        onChange={(e) => setDepartment(e.target.value)}
+                                                        required
+                                                        error={checkRequired && department.length <= 0}
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={12} md={6}>
+                                                    <TextField
+                                                        label="數量"
+                                                        type="number"
+                                                        value={amount}
+                                                        onChange={(e) => setAmount(isNaN(parseInt(e.target.value)) ? null : parseInt(e.target.value))}
+                                                        required
+                                                        error={amount == null || amount < 1}
+                                                        helperText={amount && amount < 1 ? "Should not less then one" : null}
+                                                    />
+                                                </Grid>
+                                            </Grid>
 
-                            <Grid container className={classes.btnContainer} justify="flex-end">
-                                <Grid item xs={"auto"}>
-                                    <Button variant="contained" color="primary" onClick={submitForm}>送出</Button>
-                                </Grid>
-                            </Grid>
+                                            <Grid container className={classes.btnContainer} justify="flex-end">
+                                                <Grid item xs={"auto"}>
+                                                    <Button variant="contained" color="primary" onClick={submitForm}>送出</Button>
+                                                </Grid>
+                                            </Grid>
+                                        </>
+                            }
                         </CardContent>
                     </Card>
                 </Grid>

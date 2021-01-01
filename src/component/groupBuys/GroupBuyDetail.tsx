@@ -1,4 +1,4 @@
-import { Switch, Card, CardContent, CardHeader, CircularProgress, Container, createStyles, Divider, FormControlLabel, Grid, makeStyles, Theme, Typography, Button, IconButton, Menu, MenuItem, ListItemIcon, Snackbar } from '@material-ui/core'
+import { Switch, Card, CardContent, CardHeader, CircularProgress, Container, createStyles, Divider, FormControlLabel, Grid, makeStyles, Theme, Typography, Button, IconButton, Menu, MenuItem, ListItemIcon, Snackbar, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core'
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline'
 import HighlightOffIcon from '@material-ui/icons/HighlightOff'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
@@ -9,7 +9,7 @@ import { sum } from 'lodash'
 import React, { useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { isLoaded, useFirestore, useFirestoreConnect } from 'react-redux-firebase'
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import { storeTypes } from '../../store'
 import OrdersDataGrid from '../order/OrdersDataGrid'
 import { Alert } from '@material-ui/lab'
@@ -42,7 +42,13 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         endBtn: {
             marginTop: theme.spacing(2)
-        }
+        },
+        successBtnNoFill: {
+            color: theme.palette.success.main
+        },
+        dangerBtnNoFill: {
+            color: theme.palette.error.main
+        },
     })
 );
 
@@ -110,6 +116,13 @@ function GroupBuyDetail() {
         setSnackBarOpen(false);
     }
 
+    const [endGroupBuyConfirmDialogOpen, setEndGroupBuyConfirmDialogOpen] = useState(false);
+    const onEndGroupBuyConfirmDialogClose = () => {
+        setEndGroupBuyConfirmDialogOpen(false);
+    }
+
+    const history = useHistory();
+
     return (
         <Container maxWidth={false}>
             <Grid container spacing={3}>
@@ -169,6 +182,7 @@ function GroupBuyDetail() {
                                         }
                                         <Divider className={classes.divider} />
                                         <FormControlLabel
+                                            disabled={groupBuy.end}
                                             control={
                                                 <Switch
                                                     checked={groupBuy.isOpen}
@@ -183,6 +197,7 @@ function GroupBuyDetail() {
                                             label="開放訂購"
                                         />
                                         <FormControlLabel
+                                            disabled={groupBuy.end}
                                             control={
                                                 <Switch
                                                     checked={groupBuy.canPay}
@@ -197,6 +212,7 @@ function GroupBuyDetail() {
                                             label="開放繳費"
                                         />
                                         <FormControlLabel
+                                            disabled={groupBuy.end}
                                             control={
                                                 <Switch
                                                     checked={groupBuy.canTake}
@@ -210,7 +226,15 @@ function GroupBuyDetail() {
                                             }
                                             label="開放取書"
                                         />
-                                        <Button className={`${(orderCount === paidCount && totalCount === takenCount) ? classes.successBtn : classes.dangerBtn} ${classes.endBtn}`} variant="contained" fullWidth>結束訂單</Button>
+                                        <Button
+                                            disabled={groupBuy.end}
+                                            className={`${(orderCount === paidCount && totalCount === takenCount) ? classes.successBtn : classes.dangerBtn} ${classes.endBtn}`}
+                                            variant="contained"
+                                            fullWidth
+                                            onClick={() => setEndGroupBuyConfirmDialogOpen(true)}
+                                        >
+                                            結束訂單
+                                        </Button>
                                     </CardContent>
                                 </Card>
                             </Grid>
@@ -261,6 +285,29 @@ function GroupBuyDetail() {
                     尚未支援此功能
                 </Alert>
             </Snackbar>
+            <Dialog open={endGroupBuyConfirmDialogOpen} onClose={onEndGroupBuyConfirmDialogClose}>
+                <DialogTitle>確認結束團購</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>確定要結束這個團購嗎</DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={onEndGroupBuyConfirmDialogClose}>取消</Button>
+                    <Button
+                        className={orderCount === paidCount && totalCount === takenCount ? classes.successBtnNoFill : classes.dangerBtnNoFill}
+                        onClick={() => {
+                            firestore.collection("groupBuys").doc(groupBuyId).update({
+                                end: true,
+                                canTake: false,
+                                canPay: false,
+                                isOpen: false
+                            }).then(() => {
+                                toast.success("團購已結束");
+                                history.push('/myGroupBuys');
+                            })
+                        }}
+                    >確認</Button>
+                </DialogActions>
+            </Dialog>
         </Container >
     )
 }

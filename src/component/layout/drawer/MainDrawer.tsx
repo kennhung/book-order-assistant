@@ -49,19 +49,19 @@ function MainDrawer({ open, handleDrawerClose }: MainDrawerProps) {
                     <ListItemIcon>
                         <HomeIcon />
                     </ListItemIcon>
-                    <ListItemText primary={"Home"} />
+                    <ListItemText primary={"首頁"} />
                 </ListItem>
                 <ListItem button selected={location.pathname === '/myorder'} onClick={() => history.push('/myorder')}>
                     <ListItemIcon>
                         <MenuBookIcon />
                     </ListItemIcon>
-                    <ListItemText primary={"My Orders"} />
+                    <ListItemText primary={"我的訂單"} />
                 </ListItem>
                 <ListItem button selected={location.pathname === '/myGroupBuys'} onClick={() => history.push('/myGroupBuys')}>
                     <ListItemIcon>
                         <GroupIcon />
                     </ListItemIcon>
-                    <ListItemText primary={"My Group Buys"} />
+                    <ListItemText primary={"我的團購"} />
                 </ListItem>
             </List>
             <Divider />
@@ -70,7 +70,7 @@ function MainDrawer({ open, handleDrawerClose }: MainDrawerProps) {
                     <ListItemIcon>
                         <SettingsIcon />
                     </ListItemIcon>
-                    <ListItemText primary={"Settings"} />
+                    <ListItemText primary={"設定"} />
                 </ListItem>
             </List>
         </Drawer>
