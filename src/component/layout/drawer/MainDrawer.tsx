@@ -57,7 +57,7 @@ function MainDrawer({ open, handleDrawerClose }: MainDrawerProps) {
                     </ListItemIcon>
                     <ListItemText primary={"My Orders"} />
                 </ListItem>
-                <ListItem button>
+                <ListItem button selected={location.pathname === '/myGroupBuys'} onClick={() => history.push('/myGroupBuys')}>
                     <ListItemIcon>
                         <GroupIcon />
                     </ListItemIcon>

@@ -6,6 +6,8 @@ import Home from './homepage/Home'
 import MyOrders from './order/MyOrders'
 import OrderForm from './order/OrderForm'
 import MyGroupBuys from './groupBuys/MyGroupBuys'
+import CreateGroupBuyForm from './groupBuys/CreateGroupBuyForm'
+import GroupBuyDetail from './groupBuys/GroupBuyDetail'
 
 function MainAppRoutes() {
     return (
@@ -20,8 +22,14 @@ function MainAppRoutes() {
                 <Route path='/order/form/:formId'>
                     <OrderForm />
                 </Route>
-                <Route path='/groupBuys'>
+                <Route path='/myGroupBuys'>
                     <MyGroupBuys />
+                </Route>
+                <Route path='/groupBuy/create'>
+                    <CreateGroupBuyForm />
+                </Route>
+                <Route path='/groupBuy/detail/:groupBuyId'>
+                    <GroupBuyDetail />
                 </Route>
                 <Route>
                     <NotFoundPage />
