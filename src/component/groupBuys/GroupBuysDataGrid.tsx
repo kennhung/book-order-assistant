@@ -3,6 +3,7 @@ import { CircularProgress, Table, TableBody, TableCell, TableContainer, TableHea
 import { storeTypes } from '../../store'
 import { isLoaded, useFirestoreConnect } from 'react-redux-firebase'
 import { useSelector } from 'react-redux'
+import { useHistory } from 'react-router-dom'
 
 type GroupBuysDataGridProps = {
     groupBuys: [any],
@@ -10,6 +11,7 @@ type GroupBuysDataGridProps = {
 }
 
 function GroupBuyRow({ groupBuy }: { groupBuy: any }) {
+    const history = useHistory();
 
     useFirestoreConnect([
         {
@@ -18,15 +20,25 @@ function GroupBuyRow({ groupBuy }: { groupBuy: any }) {
         }
     ]);
 
-    const orders = useSelector((state: storeTypes) => state.firestore.ordered.orders);
+    const orders = useSelector((state: storeTypes) => {
+        const data = state.firestore.data;
 
-    return <TableRow>
+        return data.orders && Object.keys(data.orders).map((key) => { 
+            return data.orders[key];
+        }).filter(({ orderTarget }: any) => {
+            return orderTarget === groupBuy.id
+        })
+    });
+
+    return <TableRow hover style={{ cursor: "pointer" }} onClick={() => history.push(`/groupBuy/detail/${groupBuy.id}`)}>
         <TableCell component="th" scope="row">
-            {groupBuy.isOpen ? "開放中" : "停止接收訂單"}
+            {groupBuy.isOpen ? "開放中" : "訂單關閉"}
         </TableCell>
         <TableCell>{groupBuy.bookName}</TableCell>
         <TableCell>{groupBuy.price}</TableCell>
-        <TableCell>{isLoaded(orders) ? orders.length : null}</TableCell>
+        <TableCell>
+            {isLoaded(orders) && orders ? orders.length : null}
+        </TableCell>
     </TableRow>
 }
 
@@ -41,7 +53,7 @@ function GroupBuysDataGrid({ groupBuys, loading }: GroupBuysDataGridProps) {
                             <TableCell>狀態</TableCell>
                             <TableCell>書名</TableCell>
                             <TableCell>價格</TableCell>
-                            <TableCell>目前數量</TableCell>
+                            <TableCell>訂單數量</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

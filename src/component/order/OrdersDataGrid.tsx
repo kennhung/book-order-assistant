@@ -3,6 +3,7 @@ import { CircularProgress, Table, TableBody, TableCell, TableContainer, TableHea
 import { storeTypes } from '../../store'
 import { useFirestoreConnect } from 'react-redux-firebase'
 import { useSelector } from 'react-redux'
+import { group } from 'console'
 
 type OrdersDataGridProps = {
     orders: [any],
@@ -10,12 +11,26 @@ type OrdersDataGridProps = {
     groupBuyView?: boolean
 }
 
-export const statusStrings: any = {
+export const orderStatusString: any = {
     pending: "等待中",
     pendingPay: "等待付款中",
     paid: "已付款",
     pendingTake: "等待取書中",
     taken: "已取書"
+}
+
+function getOrderStatus(order: any, groupBuy: any): any {
+    const taken = order.taken || 0;
+
+    if (taken >= order.amount) {
+        return "taken";
+    } else if (order.paid && taken < order.amount) {
+        return groupBuy.canTake ? "pendingTake" : "paid";
+    } else if (!order.paid && groupBuy.canPay) {
+        return "pendingPay";
+    } else {
+        return "pending";
+    }
 }
 
 function OrderRow({ order, groupBuyView }: { order: any, groupBuyView: boolean }) {
@@ -33,14 +48,14 @@ function OrderRow({ order, groupBuyView }: { order: any, groupBuyView: boolean }
         return data.groupBuys && data.groupBuys[order.orderTarget];
     });
 
-    return <TableRow key={order.id}>
+    return <TableRow hover key={order.id}>
         <TableCell component="th" scope="row">
             {new Date(order.timeStamp.seconds * 1000).toLocaleString()}
         </TableCell>
         <TableCell>{order.department}{" "}{order.name}</TableCell>
         {!groupBuyView ? <TableCell>{groupBuy?.bookName}</TableCell> : null}
         <TableCell align="right">{order.amount}</TableCell>
-        <TableCell align="right">{statusStrings[order.status]}</TableCell>
+        <TableCell align="right">{groupBuy && order ? orderStatusString[getOrderStatus(order, groupBuy)] : "n/a"}</TableCell>
     </TableRow>
 }
 
